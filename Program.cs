@@ -1,4 +1,5 @@
-﻿string getvideoid(string url)
+﻿//the recommended way to parse youtube url
+string getvideoid(string url)
 {
     if (url == null) { throw new ArgumentNullException("url"); }
 
@@ -32,8 +33,57 @@
     return viewParam;
 }
 
+//xamarin doesnt support system.web so use this
+string getvideoidxamarin(string url)
+{
+    if (url == null) { throw new ArgumentNullException("url"); }
+
+    var viewParam = url;
+
+    if (url.Contains("watch?v="))
+    {
+        viewParam = url.Substring(url.LastIndexOf("watch?v=") + 8);
+        char[] charArray = viewParam.ToCharArray();
+        Array.Reverse(charArray);
+        var tempstr = new string(charArray);
+        tempstr = tempstr.Remove(0, tempstr.Length - 11);
+        char[] charArray2 = tempstr.ToCharArray();
+        Array.Reverse(charArray2);
+        viewParam = new string(charArray2);
+
+    }
+    else if (url.Contains("youtube.com/v/") || url.Contains("youtu.be/"))
+    {
+        viewParam = url.Substring(url.LastIndexOf("/") + 1);
+        if (viewParam.Length > 10)
+        {
+            char[] charArray = viewParam.ToCharArray();
+            Array.Reverse(charArray);
+            var tempstr = new string(charArray);
+            tempstr = tempstr.Remove(0, tempstr.Length - 11);
+            char[] charArray2 = tempstr.ToCharArray();
+            Array.Reverse(charArray2);
+            viewParam = new string(charArray2);
+        }
+
+    }
+    else
+    {
+        throw new Exception("Can't parse the url");
+    }
 
 
+
+
+
+
+    if (viewParam == null || viewParam == "") { throw new Exception("Can't parse the url"); }
+
+    return viewParam;
+}
+
+
+//get string between two strings
 string GetBetween(string strSource, string strStart, string strEnd)
 {
     if (strSource.Contains(strStart) && strSource.Contains(strEnd))
